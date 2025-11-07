@@ -1,0 +1,2 @@
+com.kondr.web.configuration.WebAutoConfiguration
+com.kondr.web.configuration.CorsAutoConfiguration

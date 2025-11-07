@@ -1,0 +1,10 @@
+global:
+  services:
+    profile:
+      service-id: profile
+      base-url: http://localhost:9501
+    conversation:
+      service-id: conversation
+      rsocket-service-id: conversation-rsocket
+      base-url: http://localhost:9502
+      rsocket-path: /rsocket/conversation

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="$USER_HOME$/.gradle/wrapper/dists/gradle-8.10-bin/deqhafrv1ntovfmgh0nh3npr9/gradle-8.10" />
+        <option name="gradleJvm" value="17" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/ms-conversation" />
+            <option value="$PROJECT_DIR$/ms-discovery" />
+            <option value="$PROJECT_DIR$/ms-gateway" />
+            <option value="$PROJECT_DIR$/ms-profile" />
+            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/shared-config" />
+            <option value="$PROJECT_DIR$/starter" />
+            <option value="$PROJECT_DIR$/starter-actuator" />
+            <option value="$PROJECT_DIR$/starter-kafka" />
+            <option value="$PROJECT_DIR$/starter-keycloak" />
+            <option value="$PROJECT_DIR$/starter-logging" />
+            <option value="$PROJECT_DIR$/starter-mongo" />
+            <option value="$PROJECT_DIR$/starter-redis" />
+            <option value="$PROJECT_DIR$/starter-web" />
+            <option value="$PROJECT_DIR$/starter-web-core" />
+            <option value="$PROJECT_DIR$/starter-web-security" />
+            <option value="$PROJECT_DIR$/starter-web-validation" />
+            <option value="$PROJECT_DIR$/web-client" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

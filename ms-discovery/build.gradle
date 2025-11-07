@@ -1,0 +1,9 @@
+apply from: gradle.scripts.javaApplication
+apply from: gradle.scripts.springBootApplication
+apply from: gradle.scripts.springCloudDependencies
+
+dependencies {
+    implementation project(":starter-logging")
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+}

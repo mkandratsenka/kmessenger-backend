@@ -1,0 +1,47 @@
+# Для локальной разработки и тестирования без Docker Swarm.
+services:
+
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  keycloak:
+    command: start-dev --import-realm
+    environment:
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    volumes:
+      - ./keycloak/realm-export.local.json:/opt/keycloak/data/import/realm-export.json:ro
+    ports:
+      - "8443:8080"
+
+  mongo:
+    ports:
+      - "27017:27017"
+    command: >
+      /bin/sh -c "
+        cp /etc/keyfile /tmp/keyfile && \
+        chown 999:999 /tmp/keyfile && \
+        chmod 400 /tmp/keyfile && \
+        exec mongod --replSet rs0 --bind_ip_all --keyFile /tmp/keyfile
+      "
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - ./mongo/keyfile:/etc/keyfile:ro
+
+  mongo-init:
+    tmpfs: # не создавать volumes
+      - /data/db
+      - /data/configdb
+
+  kafka:
+    ports:
+      - "9092:9092"
+
+  redis:
+    ports:
+      - "6379:6379"

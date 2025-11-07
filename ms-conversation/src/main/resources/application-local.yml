@@ -1,0 +1,23 @@
+cors:
+  enabled: false
+
+eureka:
+  client:
+    enabled: true
+
+keycloak:
+  provider:
+    token-uri: http://localhost:8443/realms/kmessenger/protocol/openid-connect/token
+
+conversation:
+  mongo:
+    uri: mongodb://admin:mongoLocal@localhost:27017/conversation_db?authSource=admin
+  keycloak:
+    client:
+      secret: SllG0BfwMMuL1jZYsYleFeyKmbvwbYxD
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
+    org.mongodb.driver.protocol.command: INFO
+    org.apache.kafka: INFO

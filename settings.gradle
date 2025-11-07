@@ -1,0 +1,35 @@
+rootProject.name = 'kmessenger'
+
+gradle.ext.scripts = [
+        javaBase               : "${rootDir}/gradle/java-base.gradle",
+        javaLibrary            : "${rootDir}/gradle/java-library.gradle",
+        javaApplication        : "${rootDir}/gradle/java-application.gradle",
+        javaLombok             : "${rootDir}/gradle/java-lombok.gradle",
+        javaCommonLibraries    : "${rootDir}/gradle/java-common-libraries.gradle",
+        springBootDependencies : "${rootDir}/gradle/spring-boot-dependencies.gradle",
+        springCloudDependencies: "${rootDir}/gradle/spring-cloud-dependencies.gradle",
+        springBootStarter      : "${rootDir}/gradle/spring-boot-starter.gradle",
+        springBootApplication  : "${rootDir}/gradle/spring-boot-application.gradle",
+]
+
+include 'shared'
+include 'shared-config'
+
+include 'ms-profile'
+include 'ms-conversation'
+include 'ms-discovery'
+include 'ms-gateway'
+
+include 'web-client'
+
+include 'starter'
+include 'starter-actuator'
+include 'starter-kafka'
+include 'starter-keycloak'
+include 'starter-logging'
+include 'starter-mongo'
+include 'starter-redis'
+include 'starter-web-core'
+include 'starter-web'
+include 'starter-web-security'
+include 'starter-web-validation'

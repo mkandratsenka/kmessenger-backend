@@ -1,0 +1,5 @@
+app:
+  rest:
+    client:
+      profile:
+        base-url: http://ms-profile:9501

@@ -1,0 +1,7 @@
+apply from: gradle.scripts.javaLibrary
+apply from: gradle.scripts.javaLombok
+apply from: gradle.scripts.springCloudDependencies
+
+dependencies {
+    api project(':starter-web-security')
+}

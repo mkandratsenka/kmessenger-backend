@@ -1,0 +1,67 @@
+server:
+  port: 9500
+
+spring:
+  config:
+    import: "classpath:service-registry.yml"
+
+  application:
+    name: gateway
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: ${cors.allowed-origins}
+                allowedMethods: ${cors.allowed-methods}
+                allowedHeaders: ${cors.allowed-headers}
+                allowCredentials: ${cors.allow-credentials}
+
+          default-filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+          httpclient:
+            connect-timeout: 5000
+            response-timeout: 10s
+
+          routes:
+            - id: ${global.services.profile.service-id}
+              uri: "lb://${global.services.profile.service-id}"
+              predicates:
+                - Path=/api/profiles/**
+              filters:
+                - StripPrefix=1
+
+            - id: ${global.services.conversation.service-id}
+              uri: "lb://${global.services.conversation.service-id}"
+              predicates:
+                - Path=/api/conversations/**
+              filters:
+                - StripPrefix=1
+
+            - id: ${global.services.conversation.rsocket-service-id}
+              uri: "lb:ws://${global.services.conversation.service-id}"
+              predicates:
+                - Path=${global.services.conversation.rsocket-path}/**
+
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+      password: ${redis.password}

@@ -1,0 +1,20 @@
+<configuration>
+  <!-- Основной аппендер -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %highlight([%thread]) %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- AsyncAppender для асинхронности, чтобы не блокировать основные потоки -->
+  <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="CONSOLE" />  <!-- Ссылка на аппендер -->
+    <queueSize>1024</queueSize>      <!-- Размер буфера -->
+    <discardingThreshold>0</discardingThreshold>  <!-- Не отбрасывать логи при переполнении -->
+  </appender>
+
+  <!-- Root logger с асинхронным аппендером -->
+  <root level="INFO">
+    <appender-ref ref="ASYNC" />
+  </root>
+</configuration>

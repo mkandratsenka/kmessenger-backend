@@ -1,0 +1,5 @@
+apply from: gradle.scripts.springBootDependencies
+
+dependencies {
+    compileOnly "org.springframework.boot:spring-boot-starter"
+}

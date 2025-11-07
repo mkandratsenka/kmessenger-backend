@@ -1,0 +1,154 @@
+# Запускается в режиме Docker Swarm.
+
+configs:
+  mongo_key_config:
+    file: ./mongo/keyfile
+
+services:
+
+  nginx-proxy:
+    image: nginx:stable-alpine3.21
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs/stage:/etc/nginx/certs:ro
+    networks:
+      - app_net
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    deploy:
+      mode: global
+      restart_policy:
+        condition: none
+
+  postgres:
+    env_file:
+      - .env.stage
+    deploy:
+      restart_policy:
+        condition: none
+
+  keycloak:
+    command: start --import-realm
+    env_file:
+      - .env.stage
+    environment:
+      KC_PROXY: "edge"
+      KC_HTTP_RELATIVE_PATH: "/auth/"
+      KC_PROXY_HEADERS: "xforwarded"  # Парсит X-Forwarded-* headers от NGINX для правильных редиректов
+      KC_HTTP_ENABLED: "true"  # Разрешает HTTP внутри (NGINX берёт HTTPS)
+      KC_HOSTNAME_STRICT: "false"  # Отключает строгие проверки hostname
+      KC_HOSTNAME_STRICT_HTTPS: "false"  # Отключает принуждение HTTPS в редиректах
+    volumes:
+      - ./keycloak/realm-export.stage.json:/opt/keycloak/data/import/realm-export.json:ro
+    deploy:
+      restart_policy:
+        delay: 5s
+        condition: any
+
+  mongo:
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env.stage
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    configs:
+      - source: mongo_key_config
+        target: /etc/keyfile
+        uid: '999'
+        gid: '999'
+        mode: 0400
+    deploy:
+      restart_policy:
+        condition: any
+
+  mongo-init:
+    env_file:
+      - .env.stage
+    volumes:
+      - type: tmpfs
+        target: /data/db
+      - type: tmpfs
+        target: /data/configdb
+    deploy:
+      restart_policy:
+        condition: none
+
+  kafka:
+    ports:
+      - "9092:9092"
+    env_file:
+      - .env.stage
+    deploy:
+      restart_policy:
+        condition: none
+
+  kafka-create-topics:
+    env_file:
+      - .env.stage
+    deploy:
+      restart_policy:
+        #        condition: on-failure
+        condition: none
+
+  redis:
+    env_file:
+      - .env.stage
+    deploy:
+      restart_policy:
+        condition: none
+
+  ms-profile:
+    image: ms-profile:1.0.0
+    env_file:
+      - .env.stage
+    environment:
+      - SPRING_PROFILES_ACTIVE=stage
+    networks:
+      - app_net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: none
+    healthcheck:
+      test: "curl -f -u ${ACTUATOR_USERNAME}:${ACTUATOR_PASSWORD} http://localhost:9501/actuator/health/liveness"
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  ms-conversation:
+    image: ms-conversation:1.0.0
+    env_file:
+      - .env.stage
+    environment:
+      - SPRING_PROFILES_ACTIVE=stage
+    networks:
+      - app_net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: none
+    healthcheck:
+      test: "curl -f -u ${ACTUATOR_USERNAME}:${ACTUATOR_PASSWORD} http://localhost:9502/actuator/health/liveness"
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  frontend:
+#    image: kandratsenka94/kmessenger-frontend:latest
+    image: frontend-stage:1.0.0
+    networks:
+      - app_net
+    deploy:
+      restart_policy:
+        condition: none

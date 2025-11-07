@@ -1,0 +1,6 @@
+app:
+  rest:
+    client:
+      profile:
+        base-url: ${global.services.profile.base-url}
+#        base-url: "lb://${global.services.profile.service-id}"

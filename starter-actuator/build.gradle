@@ -1,0 +1,10 @@
+apply from: gradle.scripts.javaLibrary
+apply from: gradle.scripts.springBootStarter
+
+dependencies {
+    api project(":starter")
+
+    api 'org.springframework.boot:spring-boot-starter-actuator'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+}

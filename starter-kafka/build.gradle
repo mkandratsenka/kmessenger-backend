@@ -1,0 +1,9 @@
+apply from: gradle.scripts.javaLibrary
+apply from: gradle.scripts.springBootStarter
+
+dependencies {
+    api project(":starter")
+
+    api 'org.springframework.kafka:spring-kafka'
+    api 'io.projectreactor.kafka:reactor-kafka'
+}

@@ -1,0 +1,76 @@
+server:
+  port: 9502
+
+app:
+  keycloak:
+    client:
+      registration-id: ms-conversation
+
+  kafka:
+    topics:
+      messages: "conversations.messages"
+    producers:
+      message:
+        delivery-timeout-ms: 2100
+        request-timeout-ms: 2000
+        max-block-ms: 2100
+    consumers:
+      message:
+        commit-retry-interval: 5s
+        max-deferred-commits: 5000
+        events-prefetch: 256
+        process-timeout: 20s
+        conversation-idle-timeout: 25s # > process-timeout
+        conversation-idle-check-interval: 30s # > conversation-idle-timeout
+        max-active-conversations: 256
+
+spring:
+  config:
+    import: "classpath:service-registry.yml"
+
+  application:
+    name: conversation
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+  rsocket:
+    server:
+      transport: websocket
+      mapping-path: ${global.services.conversation.rsocket-path}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          ms-conversation:
+            client-id: ${app.keycloak.client.registration-id}
+            client-secret: ${conversation.keycloak.client.secret}
+            authorization-grant-type: client_credentials
+            provider: keycloak
+        provider:
+          keycloak:
+            token-uri: ${keycloak.provider.token-uri}
+  data:
+    mongodb:
+      uri: ${conversation.mongo.uri}
+
+  kafka:
+    consumer:
+      group-id: conversation
+    properties:
+      spring.json.trusted.packages: "com.kondr.conversation.messaging.kafka.event"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: stage, prod
+
+cors:
+  enabled: true
+
+eureka:
+  client:
+    enabled: false

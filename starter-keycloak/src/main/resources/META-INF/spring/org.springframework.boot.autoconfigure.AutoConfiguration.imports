@@ -1,0 +1,2 @@
+com.kondr.keycloak.configuration.KeycloakClientAutoConfiguration
+com.kondr.keycloak.configuration.KeycloakResourceServerAutoConfiguration

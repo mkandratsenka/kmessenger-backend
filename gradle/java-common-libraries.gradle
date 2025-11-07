@@ -1,0 +1,9 @@
+apply from: gradle.scripts.javaLombok
+
+dependencies {
+    implementation libs.mapstruct
+    annotationProcessor libs.mapstruct.processor
+    annotationProcessor libs.lombok.mapstruct.binding
+
+    implementation libs.commons.lang3
+}

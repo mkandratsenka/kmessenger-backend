@@ -1,0 +1,9 @@
+apply from: gradle.scripts.javaLibrary
+apply from: gradle.scripts.javaLombok
+apply from: gradle.scripts.springBootStarter
+
+dependencies {
+    api project(':starter-web-core')
+
+    api project(':shared')
+}

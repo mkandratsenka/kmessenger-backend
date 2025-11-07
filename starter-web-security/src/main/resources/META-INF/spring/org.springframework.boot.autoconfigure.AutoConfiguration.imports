@@ -1,0 +1,2 @@
+com.kondr.web.security.configuration.WebSecurityAutoConfiguration
+com.kondr.web.security.configuration.WebClientSecurityAutoConfiguration

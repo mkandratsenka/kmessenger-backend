@@ -1,0 +1,7 @@
+app:
+  mongo:
+    pool:
+      min-size: 1
+      max-size: 100
+      max-wait-time: 10s
+      max-connection-idle-time: 240s

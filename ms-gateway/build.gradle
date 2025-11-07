@@ -1,0 +1,15 @@
+apply from: gradle.scripts.javaApplication
+apply from: gradle.scripts.springBootApplication
+apply from: gradle.scripts.springCloudDependencies
+
+dependencies {
+    implementation project(":starter-logging")
+    implementation project(":starter-keycloak")
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+
+}

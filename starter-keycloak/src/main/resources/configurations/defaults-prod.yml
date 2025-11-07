@@ -1,0 +1,5 @@
+app:
+  keycloak:
+    resource-server:
+      issuer-uri: ${KEYCLOAK_ISSUER_URI}
+      jwk-set-uri: ${KEYCLOAK_JWK_URI}

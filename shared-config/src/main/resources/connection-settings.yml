@@ -1,0 +1,5 @@
+global:
+  connection:
+    tcp:
+      # https://github.com/moby/moby/issues/31208
+      max-idle-time: 12m # строго < 15m для избежания "Connection reset by peer"

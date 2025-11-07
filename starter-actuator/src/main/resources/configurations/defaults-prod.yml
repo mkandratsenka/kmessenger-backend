@@ -1,0 +1,15 @@
+app:
+  actuator:
+    security:
+      username: ${ACTUATOR_USERNAME}
+      password: ${ACTUATOR_PASSWORD}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true

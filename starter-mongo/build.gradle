@@ -1,0 +1,11 @@
+apply from: gradle.scripts.javaLibrary
+apply from: gradle.scripts.javaLombok
+apply from: gradle.scripts.springBootStarter
+
+dependencies {
+    api project(":starter")
+
+    api 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
+    implementation libs.commons.lang3
+}

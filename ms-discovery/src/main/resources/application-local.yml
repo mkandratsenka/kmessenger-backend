@@ -1,0 +1,3 @@
+eureka:
+  hostname: localhost
+  default-zone: http://${eureka.instance.hostname}/${server.port}/eureka/

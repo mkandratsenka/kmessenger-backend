@@ -1,0 +1,16 @@
+cors:
+  allowed-origins: "http://localhost:3000"
+  allowed-methods: "*"
+  allowed-headers: "*"
+  allow-credentials: true
+
+redis:
+  host: localhost
+  port: 6379
+  password: redisLocal
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web.cors: DEBUG
+    org.springframework.cloud.gateway: DEBUG

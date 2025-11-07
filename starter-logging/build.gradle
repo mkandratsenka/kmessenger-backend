@@ -1,0 +1,6 @@
+apply from: gradle.scripts.javaLibrary
+apply from: gradle.scripts.springBootStarter
+
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-logging'
+}

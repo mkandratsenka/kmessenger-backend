@@ -1,0 +1,114 @@
+# Базовый docker-compose.
+
+services:
+
+  postgres:
+    image: postgres:17.5
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: ${POSTGRES_DB}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_HOSTNAME: ${KC_HOSTNAME}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    networks:
+      - app_net
+
+  mongo:
+    image: mongo:8.0.10-noble
+    command: mongod --replSet rs0 --bind_ip_all --keyFile /etc/keyfile
+    volumes:
+      - mongo_data:/data/db
+      - mongo_config:/data/configdb
+    networks:
+      - app_net
+
+  mongo-init:
+    image: mongo:8.0.10-noble
+    command: >
+      bash -c "
+        bash /usr/local/bin/wait-for.sh \"mongosh --host mongo --eval 'db.adminCommand({ping: 1})'\" 60 1 &&
+        echo 'Mongo is ready! Initializing replica set...' &&
+        (mongosh --host mongo --username \"${MONGO_USER}\" --password \"${MONGO_PASSWORD}\" --authenticationDatabase admin --eval 'rs.initiate({ _id: \"rs0\", members: [{ _id: 0, host: \"mongo\" }] })' || echo 'Replica set already initialized') &&
+        echo 'Applying index scripts...' &&
+        mongosh --host mongo --username \"${MONGO_USER}\" --password \"${MONGO_PASSWORD}\" --authenticationDatabase admin /scripts/init-profile-db.js &&
+        mongosh --host mongo --username \"${MONGO_USER}\" --password \"${MONGO_PASSWORD}\" --authenticationDatabase admin /scripts/init-conversation-db.js &&
+        echo 'Index scripts applied successfully'
+      "
+    volumes:
+      - ./scripts/wait-for.sh:/usr/local/bin/wait-for.sh:ro
+      - ./mongo/scripts:/scripts:ro
+    networks:
+      - app_net
+
+  kafka:
+    image: bitnamilegacy/kafka:4.0.0-debian-12-r10
+    volumes:
+      - kafka_data:/bitnami
+    environment:
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_KRAFT_CLUSTER_ID=2KIFVLkHTGy9MnLBFJuFxg
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9093,EXTERNAL://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9090,EXTERNAL://${KAFKA_ADVERTISED_HOSTNAME}:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:SASL_PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      # SASL/PLAIN (без шифрования)
+      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN
+      - KAFKA_CLIENT_USERS=${KAFKA_USER}
+      - KAFKA_CLIENT_PASSWORDS=${KAFKA_PASSWORD}
+      - KAFKA_CLIENT_LISTENER_NAME=EXTERNAL
+    networks:
+      - app_net
+
+  # Сервис для автоматического создания топиков
+  kafka-create-topics:
+    image: bitnamilegacy/kafka:4.0.0-debian-12-r10
+    command: >
+      bash -c "
+        bash /usr/local/bin/wait-for.sh \"timeout 5 /opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server kafka:9090\" 60 3 &&
+        echo 'Kafka is ready! Trying to create topics...' &&
+        /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic conversations.messages --bootstrap-server kafka:9090 --partitions 4 --replication-factor 1 --if-not-exists &&
+        echo 'Topic created or exists'
+      "
+    volumes:
+      - ./scripts/wait-for.sh:/usr/local/bin/wait-for.sh:ro
+    networks:
+      - app_net
+
+  redis:
+    image: redis:8.2-m01-alpine3.22
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - app_net
+
+volumes:
+  postgres_data:
+  mongo_data:
+  mongo_config:
+  kafka_data:
+  redis_data:
+
+networks:
+  app_net:

@@ -1,0 +1,13 @@
+apply from: gradle.scripts.javaLibrary
+apply from: gradle.scripts.javaLombok
+apply from: gradle.scripts.springBootStarter
+
+dependencies {
+    api project(":starter-web-core")
+
+    // Для парсинга и валидации токенов Keycloak
+    api 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
+    // Для защищённых M2M (Machine-to-Machine) коммуникаций между микросервисами
+    api 'org.springframework.boot:spring-boot-starter-oauth2-client'
+}

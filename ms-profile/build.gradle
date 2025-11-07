@@ -1,0 +1,23 @@
+apply from: gradle.scripts.javaApplication
+apply from: gradle.scripts.javaCommonLibraries
+apply from: gradle.scripts.springBootApplication
+apply from: gradle.scripts.springCloudDependencies
+
+dependencies {
+    implementation project(":starter-actuator")
+    implementation project(":starter-logging")
+    implementation project(':starter-mongo')
+    implementation project(':starter-web-security')
+    implementation project(':starter-web-validation')
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

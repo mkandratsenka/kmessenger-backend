@@ -1,0 +1,15 @@
+cors:
+  enabled: false
+
+eureka:
+  client:
+    enabled: true
+
+profile:
+  mongo:
+    uri: mongodb://admin:mongoLocal@localhost:27017/profile_db?authSource=admin
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
+    org.mongodb.driver.protocol.command: DEBUG

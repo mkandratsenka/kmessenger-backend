@@ -1,0 +1,7 @@
+app:
+  keycloak:
+    client:
+      registration-id: # optional
+    resource-server:
+      issuer-uri: http://localhost:8443/realms/kmessenger
+      jwk-set-uri: http://localhost:8443/realms/kmessenger/protocol/openid-connect/certs
