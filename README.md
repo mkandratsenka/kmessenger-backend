@@ -1,10 +1,10 @@
 ## Экспериментальный мессенджер на реактивном стеке!
 
 <p>
-  <img src="https://github.com/user-attachments/assets/55605816-b629-449a-bd31-55bf5bbeba4c" width="600"/>
+  <img src="https://github.com/user-attachments/assets/29ff2c2d-b393-4f2a-8075-764205d42609" width="600"/>
 </p>
 <p>
-  <img src="https://github.com/user-attachments/assets/e3b3bcff-f58d-4586-8da1-607a2d3cb116" width="600"/>
+  <img src="https://github.com/user-attachments/assets/d3234b8b-1cc1-40cd-b62b-a12f07525529" width="600"/>
 </p>
 
 ### Технологии:
